@@ -22,36 +22,37 @@ media = []
 centro = []
 atraso = 1.5
 
+
 check_delay = False # Só usar se os relógios ROS da Raspberry e do Linux desktop estiverem sincronizados
 
-def identifica_cor(frame):
+def indentifica_cor1(frame):
 	'''
 	Segmenta o maior objeto cuja cor é parecida com cor_h (HUE da cor, no espaço HSV).
 	'''
 
-	# No OpenCV, o canal H vai de 0 até 179, logo cores similares ao 
-	# vermelho puro (H=0) estão entre H=-8 e H=8. 
-	# Precisamos dividir o inRange em duas partes para fazer a detecção 
+	# No OpenCV, o canal H vai de 0 até 179, logo cores similares ao
+	# vermelho puro (H=0) estão entre H=-8 e H=8.
+	# Precisamos dividir o inRange em duas partes para fazer a detecção
 	# do vermelho:
 	frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
 	cor_menor = np.array([0, 50, 50])
-	cor_maior = np.array([8, 255, 255])
+	cor_maior = np.array([8, 248, 255])
 	segmentado_cor = cv2.inRange(frame_hsv, cor_menor, cor_maior)
 
-	cor_menor = np.array([172, 50, 50])
-	cor_maior = np.array([180, 255, 255])
+	cor_menor = np.array([170, 50, 50])
+	cor_maior = np.array([180, 248, 255])
 	segmentado_cor += cv2.inRange(frame_hsv, cor_menor, cor_maior)
 
 
-	# A operação MORPH_CLOSE fecha todos os buracos na máscara menores 
-	# que um quadrado 7x7. É muito útil para juntar vários 
+	# A operação MORPH_CLOSE fecha todos os buracos na máscara menores
+	# que um quadrado 7x7. É muito útil para juntar vários
 	# pequenos contornos muito próximos em um só.
 	segmentado_cor = cv2.morphologyEx(segmentado_cor,cv2.MORPH_CLOSE,np.ones((7, 7)))
 
 	# Encontramos os contornos na máscara e selecionamos o de maior área
-	#contornos, arvore = cv2.findContours(segmentado_cor.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)	
-	img_out, contornos, arvore = cv2.findContours(segmentado_cor.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE) 
+	#contornos, arvore = cv2.findContours(segmentado_cor.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+	img_out, contornos, arvore = cv2.findContours(segmentado_cor.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
 	maior_contorno = None
 	maior_contorno_area = 0
@@ -81,38 +82,40 @@ def identifica_cor(frame):
 	return media, centro
 
 
-
 def roda_todo_frame(imagem):
 	print("frame")
 	global cv_image
 	global media
 	global centro
+	kernel = np.ones((5,5),np.uint8)
 
 	now = rospy.get_rostime()
 	imgtime = imagem.header.stamp
 	lag = now-imgtime
 	delay = lag.secs
 	if delay > atraso and check_delay==True:
-		return 
+		return
 	try:
 		antes = time.clock()
 		cv_image = bridge.compressed_imgmsg_to_cv2(imagem, "bgr8")
-		media, centro = identifica_cor(cv_image)
+		opening = cv2.morphologyEx(cv_image, cv2.MORPH_OPEN, kernel)
+		closing = cv2.morphologyEx(opening, cv2.MORPH_CLOSE, kernel)
+		media, centro = indentifica_cor1(closing)
 		depois = time.clock()
 		cv2.imshow("Camera", cv_image)
 	except CvBridgeError as e:
 		print('ex', e)
-	
+
 
 
 if __name__=="__main__":
 
 	rospy.init_node("cor")
 	# Para usar a Raspberry Pi
-	recebedor = rospy.Subscriber("/cv_camera/image_raw/compressed", CompressedImage, roda_todo_frame, queue_size=1, buff_size = 2**24)
-	
-	# Para usar a webcam 
-	#recebedor = rospy.Subscriber("/cv_camera/image_raw/compressed", CompressedImage, roda_todo_frame, queue_size=10, buff_size = 2**24)
+	#recebedor = rospy.Subscriber("/cv_camera/image_raw/compressed", CompressedImage, roda_todo_frame, queue_size=1, buff_size = 2**24)
+
+	# Para usar a webcam
+	recebedor = rospy.Subscriber("/cv_camera/image_raw/compressed", CompressedImage, roda_todo_frame, queue_size=10, buff_size = 2**24)
 
 	velocidade_saida = rospy.Publisher("/cmd_vel", Twist, queue_size = 1)
 
@@ -135,5 +138,3 @@ if __name__=="__main__":
 
 	except rospy.ROSInterruptException:
 	    print("Ocorreu uma exceção com o rospy")
-
-
