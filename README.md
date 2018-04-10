@@ -61,9 +61,6 @@ NO SIMULADOR
 roslaunch turtlebot3_gazebo turtlebot3_world.launch
 
 rosparam set cv_camera/device_id 0
-
 rosparam set cv_camera/cv_cap_prop_frame_width 640
-
 rosparam set cv_camera/cv_cap_prop_frame_height  480
-
 rosrun cv_camera cv_camera_node
