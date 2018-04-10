@@ -53,6 +53,8 @@ export ROS_IP=`hostname -I`
 export TURTLEBOT3_MODEL=burger
 rosrun rqt_reconfigure rqt_reconfigure
 
+roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
+
 
 NO SIMULADOR
 
