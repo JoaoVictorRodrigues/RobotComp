@@ -2,7 +2,7 @@
 
 export IPBerry=192.168.0.141
 ssh pi@$IPBerry
-
+senha: t0rt1g4
 screen
 Ctrl A, C     x3
 
