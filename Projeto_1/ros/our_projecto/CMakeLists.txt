@@ -122,7 +122,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/exemplos_python.cpp
+#   src/${PROJECT_NAME}/our_projecto.cpp
 # )
 
 ## Add cmake target dependencies of the library
