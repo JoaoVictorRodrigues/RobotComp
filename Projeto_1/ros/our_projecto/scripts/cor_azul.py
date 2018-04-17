@@ -54,16 +54,16 @@ def indentifica_cor2(frame):
 	if not maior_contorno is None :
 	    cv2.drawContours(frame, [maior_contorno], -1, [0, 0, 255], 5)
 	    maior_contorno = np.reshape(maior_contorno, (maior_contorno.shape[0], 2))
-	    media = maior_contorno.mean(axis=0)
-	    media = media.astype(np.int32)
-	    cv2.circle(frame, tuple(media), 5, [0, 255, 0])
+	    mediaB = maior_contorno.mean(axis=0)
+	    mediaB = mediaB.astype(np.int32)
+	    cv2.circle(frame, tuple(mediaB), 5, [0, 255, 0])
 	else:
-	    media = (0, 0)
+	    mediaB = (0, 0)
 
 	cv2.imshow('video', frame)
 	cv2.imshow('seg', segmentado_cor)
 	cv2.waitKey(1)
 
-	centro = (frame.shape[0]//2, frame.shape[1]//2)
+	centroB = (frame.shape[0]//2, frame.shape[1]//2)
 
-	return media, centro
+	return mediaB, centroB
