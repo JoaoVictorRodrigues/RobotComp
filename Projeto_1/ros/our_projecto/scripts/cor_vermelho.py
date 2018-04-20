@@ -23,7 +23,7 @@ def indentifica_cor1(frame):
 	# do vermelho:
 	frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-	cor_menor = np.array([0, 50, 50])
+	cor_menor = np.array([0, 80, 50])
 	cor_maior = np.array([8, 248, 255])
 	segmentado_cor = cv2.inRange(frame_hsv, cor_menor, cor_maior)
 
