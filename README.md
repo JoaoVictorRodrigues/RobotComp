@@ -1,5 +1,11 @@
 # RobotComp
 
+
+Link para Vídeo https://www.youtube.com/watch?v=_rL8TbvxODI&feature=youtu.be
+
+
+
+
 export IPBerry=192.168.0.141
 ssh pi@$IPBerry
 senha: t0rt1g4
